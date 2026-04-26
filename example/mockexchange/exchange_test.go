@@ -6,8 +6,8 @@ import (
 	"log/slog"
 	"testing"
 
-	"github.com/yunus/botagent/example/mockexchange"
-	"github.com/yunus/botagent/order"
+	"github.com/yun-jay/botagent/example/mockexchange"
+	"github.com/yun-jay/botagent/order"
 )
 
 func testLogger() *slog.Logger {

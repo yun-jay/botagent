@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/yunus/botagent/signal"
+	"github.com/yun-jay/botagent/signal"
 )
 
 func TestDirection_String(t *testing.T) {

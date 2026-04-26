@@ -9,10 +9,10 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/yunus/botagent/alert"
-	"github.com/yunus/botagent/config"
-	botlog "github.com/yunus/botagent/log"
-	"github.com/yunus/botagent/risk"
+	"github.com/yun-jay/botagent/alert"
+	"github.com/yun-jay/botagent/config"
+	botlog "github.com/yun-jay/botagent/log"
+	"github.com/yun-jay/botagent/risk"
 )
 
 // Bot is the interface every trading bot implements.

@@ -7,8 +7,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/yunus/botagent/risk"
-	"github.com/yunus/botagent/signal"
+	"github.com/yun-jay/botagent/risk"
+	"github.com/yun-jay/botagent/signal"
 )
 
 func TestDryRun_Enabled(t *testing.T) {

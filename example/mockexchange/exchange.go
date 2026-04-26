@@ -6,7 +6,7 @@ import (
 	"log/slog"
 	"sync"
 
-	"github.com/yunus/botagent/order"
+	"github.com/yun-jay/botagent/order"
 )
 
 // Market represents a simulated market for an instrument.

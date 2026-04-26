@@ -3,7 +3,7 @@ package risk
 import (
 	"log/slog"
 
-	"github.com/yunus/botagent/signal"
+	"github.com/yun-jay/botagent/signal"
 )
 
 // DryRun wraps execution with a paper-trading check.

@@ -1,4 +1,4 @@
-module github.com/yunus/botagent
+module github.com/yun-jay/botagent
 
 go 1.25.1
 

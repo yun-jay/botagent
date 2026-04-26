@@ -4,7 +4,7 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/yunus/botagent/risk"
+	"github.com/yun-jay/botagent/risk"
 )
 
 func TestPositionGuard_AcquireRelease(t *testing.T) {

@@ -3,9 +3,9 @@ package weatherbot
 import (
 	"context"
 
-	"github.com/yunus/botagent/signal"
-	"github.com/yunus/botagent/sizing"
-	"github.com/yunus/botagent/strategy"
+	"github.com/yun-jay/botagent/signal"
+	"github.com/yun-jay/botagent/sizing"
+	"github.com/yun-jay/botagent/strategy"
 )
 
 // WeatherEvaluator applies weather-specific filters and sizing.

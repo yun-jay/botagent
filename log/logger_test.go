@@ -6,7 +6,7 @@ import (
 	"log/slog"
 	"testing"
 
-	botlog "github.com/yunus/botagent/log"
+	botlog "github.com/yun-jay/botagent/log"
 )
 
 func TestNew_JSONFormat(t *testing.T) {

@@ -3,7 +3,7 @@ package strategy
 import (
 	"context"
 
-	"github.com/yunus/botagent/signal"
+	"github.com/yun-jay/botagent/signal"
 )
 
 // Decision is the result of evaluating a signal.

@@ -6,7 +6,7 @@ import (
 	"math"
 	"testing"
 
-	"github.com/yunus/botagent/risk"
+	"github.com/yun-jay/botagent/risk"
 )
 
 func testLogger() *slog.Logger {

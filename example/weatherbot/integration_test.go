@@ -10,14 +10,14 @@ import (
 	"testing"
 	"time"
 
-	"github.com/yunus/botagent/alert"
-	"github.com/yunus/botagent/example/mockexchange"
-	"github.com/yunus/botagent/example/weatherbot"
-	"github.com/yunus/botagent/pipeline"
-	"github.com/yunus/botagent/risk"
-	"github.com/yunus/botagent/signal"
-	"github.com/yunus/botagent/sizing"
-	"github.com/yunus/botagent/trade"
+	"github.com/yun-jay/botagent/alert"
+	"github.com/yun-jay/botagent/example/mockexchange"
+	"github.com/yun-jay/botagent/example/weatherbot"
+	"github.com/yun-jay/botagent/pipeline"
+	"github.com/yun-jay/botagent/risk"
+	"github.com/yun-jay/botagent/signal"
+	"github.com/yun-jay/botagent/sizing"
+	"github.com/yun-jay/botagent/trade"
 )
 
 func setupExchange(logger *slog.Logger) *mockexchange.Exchange {

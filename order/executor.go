@@ -3,7 +3,7 @@ package order
 import (
 	"context"
 
-	"github.com/yunus/botagent/signal"
+	"github.com/yun-jay/botagent/signal"
 )
 
 // Request is what the pipeline sends to the market.

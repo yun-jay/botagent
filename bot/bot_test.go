@@ -14,8 +14,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/yunus/botagent/alert"
-	"github.com/yunus/botagent/bot"
+	"github.com/yun-jay/botagent/alert"
+	"github.com/yun-jay/botagent/bot"
 )
 
 // --- Mock bot ---

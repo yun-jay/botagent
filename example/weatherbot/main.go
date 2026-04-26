@@ -1,6 +1,6 @@
 package weatherbot
 
-import "github.com/yunus/botagent/bot"
+import "github.com/yun-jay/botagent/bot"
 
 // Main is the entry point for running the weather bot standalone.
 // Call this from a cmd/main.go or use bot.Run directly.

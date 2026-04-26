@@ -4,12 +4,12 @@ import (
 	"context"
 	"time"
 
-	"github.com/yunus/botagent/bot"
-	"github.com/yunus/botagent/example/mockexchange"
-	"github.com/yunus/botagent/order"
-	"github.com/yunus/botagent/pipeline"
-	"github.com/yunus/botagent/sizing"
-	"github.com/yunus/botagent/trade"
+	"github.com/yun-jay/botagent/bot"
+	"github.com/yun-jay/botagent/example/mockexchange"
+	"github.com/yun-jay/botagent/order"
+	"github.com/yun-jay/botagent/pipeline"
+	"github.com/yun-jay/botagent/sizing"
+	"github.com/yun-jay/botagent/trade"
 )
 
 // WeatherBot is an example bot that trades weather prediction markets

@@ -5,7 +5,7 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/yunus/botagent/trade"
+	"github.com/yun-jay/botagent/trade"
 )
 
 func TestInMemoryRecorder_InsertAndTrades(t *testing.T) {

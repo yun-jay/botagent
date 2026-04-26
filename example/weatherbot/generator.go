@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/yunus/botagent/signal"
+	"github.com/yun-jay/botagent/signal"
 )
 
 // WeatherGenerator generates weather prediction signals.

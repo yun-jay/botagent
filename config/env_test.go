@@ -4,7 +4,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/yunus/botagent/config"
+	"github.com/yun-jay/botagent/config"
 )
 
 func TestMustEnv_Present(t *testing.T) {

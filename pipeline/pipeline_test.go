@@ -8,12 +8,12 @@ import (
 	"testing"
 	"time"
 
-	"github.com/yunus/botagent/order"
-	"github.com/yunus/botagent/pipeline"
-	"github.com/yunus/botagent/risk"
-	"github.com/yunus/botagent/signal"
-	"github.com/yunus/botagent/strategy"
-	"github.com/yunus/botagent/trade"
+	"github.com/yun-jay/botagent/order"
+	"github.com/yun-jay/botagent/pipeline"
+	"github.com/yun-jay/botagent/risk"
+	"github.com/yun-jay/botagent/signal"
+	"github.com/yun-jay/botagent/strategy"
+	"github.com/yun-jay/botagent/trade"
 )
 
 // --- Mock implementations ---

@@ -6,12 +6,12 @@ import (
 	"log/slog"
 	"time"
 
-	"github.com/yunus/botagent/alert"
-	"github.com/yunus/botagent/order"
-	"github.com/yunus/botagent/risk"
-	"github.com/yunus/botagent/signal"
-	"github.com/yunus/botagent/strategy"
-	"github.com/yunus/botagent/trade"
+	"github.com/yun-jay/botagent/alert"
+	"github.com/yun-jay/botagent/order"
+	"github.com/yun-jay/botagent/risk"
+	"github.com/yun-jay/botagent/signal"
+	"github.com/yun-jay/botagent/strategy"
+	"github.com/yun-jay/botagent/trade"
 )
 
 // Pipeline wires Generator -> Evaluator -> Executor -> Recorder

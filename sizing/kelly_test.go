@@ -4,7 +4,7 @@ import (
 	"math"
 	"testing"
 
-	"github.com/yunus/botagent/sizing"
+	"github.com/yun-jay/botagent/sizing"
 )
 
 func TestKellySizer_BasicCase(t *testing.T) {
