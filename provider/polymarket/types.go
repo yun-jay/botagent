@@ -106,6 +106,7 @@ type OrderRequest struct {
 	OrderType  OrderType `json:"type"`
 	FeeRateBps int       `json:"feeRateBps"`
 	Expiration int64     `json:"expiration,omitempty"` // Unix timestamp, required for GTD orders
+	NegRisk    bool      `json:"negRisk,omitempty"`    // Set to true for neg-risk markets (e.g., Bundesliga)
 }
 
 // OrderResponse is what the CLOB returns.
