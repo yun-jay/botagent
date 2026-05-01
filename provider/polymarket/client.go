@@ -11,6 +11,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/ethereum/go-ethereum/common"
 	"golang.org/x/time/rate"
 )
 
@@ -24,6 +25,14 @@ type Client struct {
 
 	maxRetries int
 	baseDelay  time.Duration
+
+	// Optional signing context for V2 order placement. When set, PlaceOrder signs
+	// orders via EIP-712 (V2 domain) and posts the signed payload. When nil, the
+	// caller is expected to use PostSignedOrder directly with a pre-signed order.
+	signer  Signer
+	apiKey  string
+	funder  common.Address
+	sigType SignatureType
 }
 
 func NewClient(baseURL, apiKey, secret, passphrase string, rateLimit int, maxRetries int, baseDelay time.Duration, logger *slog.Logger) *Client {
@@ -48,7 +57,18 @@ func NewClientWithAddress(baseURL, address, apiKey, secret, passphrase string, r
 		log:        logger,
 		maxRetries: maxRetries,
 		baseDelay:  baseDelay,
+		apiKey:     apiKey,
 	}
+}
+
+// WithSigner attaches an EIP-712 signer to the Client so PlaceOrder can sign V2
+// orders. funder is the on-chain maker address (e.g. Gnosis Safe); pass the
+// zero address to use the signer's own EOA. sigType selects the wallet model.
+func (c *Client) WithSigner(signer Signer, funder common.Address, sigType SignatureType) *Client {
+	c.signer = signer
+	c.funder = funder
+	c.sigType = sigType
+	return c
 }
 
 // GetOrderBook fetches the order book for a given token ID.
@@ -93,7 +113,20 @@ func (c *Client) GetOrder(ctx context.Context, orderID string) (*OpenOrder, erro
 }
 
 // PlaceOrder places a new order on the CLOB.
+//
+// When a signer is configured (via WithSigner), the order is signed using the
+// V2 EIP-712 scheme and posted as a signed payload. When no signer is set, the
+// raw OrderRequest is posted as-is (unsigned) — kept for tests and read-only
+// integrations; the V2 production CLOB will reject unsigned orders.
 func (c *Client) PlaceOrder(ctx context.Context, order *OrderRequest) (*OrderResponse, error) {
+	if c.signer != nil {
+		signed, err := c.signOrder(order)
+		if err != nil {
+			return nil, fmt.Errorf("sign order: %w", err)
+		}
+		return c.PostSignedOrder(ctx, signed)
+	}
+
 	path := "/order"
 	body, err := json.Marshal(order)
 	if err != nil {
@@ -104,6 +137,52 @@ func (c *Client) PlaceOrder(ctx context.Context, order *OrderRequest) (*OrderRes
 		return nil, fmt.Errorf("place order: %w", err)
 	}
 	return &resp, nil
+}
+
+// PostSignedOrder posts a pre-signed V2 order to the CLOB.
+func (c *Client) PostSignedOrder(ctx context.Context, signed *SignedOrderV2) (*OrderResponse, error) {
+	if signed == nil || signed.Order == nil {
+		return nil, fmt.Errorf("signed order is nil")
+	}
+	payload := BuildOrderPayload(signed)
+	body, err := json.Marshal(payload)
+	if err != nil {
+		return nil, fmt.Errorf("marshal signed order: %w", err)
+	}
+	var resp OrderResponse
+	if err := c.doPostAuth(ctx, "/order", body, &resp); err != nil {
+		return nil, fmt.Errorf("post signed order: %w", err)
+	}
+	return &resp, nil
+}
+
+// signOrder builds and signs a V2 order from a high-level OrderRequest.
+func (c *Client) signOrder(req *OrderRequest) (*SignedOrderV2, error) {
+	maker := MakerAddress(c.signer, c.sigType, c.funder)
+	o, err := BuildSimpleOrderV2(req.TokenID, req.Price, req.Size, string(req.Side), c.sigType, maker)
+	if err != nil {
+		return nil, err
+	}
+	if req.Expiration > 0 {
+		o.Expiration = bigIntFromInt64(req.Expiration)
+	}
+	if req.BuilderCode != "" {
+		b, err := decodeBytes32Hex(req.BuilderCode)
+		if err != nil {
+			return nil, fmt.Errorf("invalid builder code: %w", err)
+		}
+		o.Builder = b
+	}
+
+	signed, err := SignOrderV2(c.signer, c.apiKey, o, req.NegRisk)
+	if err != nil {
+		return nil, err
+	}
+	signed.OrderType = string(req.OrderType)
+	if signed.OrderType == "" {
+		signed.OrderType = string(LimitOrder)
+	}
+	return signed, nil
 }
 
 // CancelOrder cancels an existing order.

@@ -99,13 +99,14 @@ const (
 
 // OrderRequest is what we send to the CLOB.
 type OrderRequest struct {
-	TokenID    string    `json:"tokenID"`
-	Price      float64   `json:"price"`
-	Size       float64   `json:"size"`
-	Side       OrderSide `json:"side"`
-	OrderType  OrderType `json:"type"`
-	Expiration int64     `json:"expiration,omitempty"` // Unix timestamp, required for GTD orders
-	NegRisk    bool      `json:"negRisk,omitempty"`    // Set to true for neg-risk markets (e.g., Bundesliga)
+	TokenID     string    `json:"tokenID"`
+	Price       float64   `json:"price"`
+	Size        float64   `json:"size"`
+	Side        OrderSide `json:"side"`
+	OrderType   OrderType `json:"type"`
+	Expiration  int64     `json:"expiration,omitempty"`  // Unix timestamp, required for GTD orders
+	NegRisk     bool      `json:"negRisk,omitempty"`     // Set to true for neg-risk markets
+	BuilderCode string    `json:"builderCode,omitempty"` // 0x-prefixed bytes32 hex, attributing the order to a builder
 }
 
 // OrderResponse is what the CLOB returns.

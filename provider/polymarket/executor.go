@@ -41,15 +41,22 @@ func WithSpreadTolerance(tolerance float64) ExecutorOption {
 	return func(e *Executor) { e.spreadTolerance = tolerance }
 }
 
+// WithBuilderCode attaches a Polymarket builder code (0x-prefixed bytes32 hex)
+// to every order placed by this executor. See the Polymarket Builder Program.
+func WithBuilderCode(code string) ExecutorOption {
+	return func(e *Executor) { e.builderCode = code }
+}
+
 // Executor implements order.Executor for Polymarket.
 // Supports FOK, GTC, and limit-with-fallback order modes.
 type Executor struct {
 	client          *Client
 	logger          *slog.Logger
-	orderType       string  // "FOK", "GTC", "LIMIT_FALLBACK"
+	orderType       string // "FOK", "GTC", "LIMIT_FALLBACK"
 	limitTimeout    time.Duration
 	negRisk         bool
 	spreadTolerance float64
+	builderCode     string
 }
 
 // NewExecutor creates a Polymarket executor.
@@ -102,6 +109,9 @@ func (e *Executor) executeFOK(ctx context.Context, req order.Request) (order.Res
 	if e.negRisk {
 		pmOrder.NegRisk = true
 	}
+	if e.builderCode != "" {
+		pmOrder.BuilderCode = e.builderCode
+	}
 
 	resp, err := e.client.PlaceOrder(ctx, pmOrder)
 	if err != nil {
@@ -135,6 +145,9 @@ func (e *Executor) executeGTC(ctx context.Context, req order.Request) (order.Res
 
 	if e.negRisk {
 		pmOrder.NegRisk = true
+	}
+	if e.builderCode != "" {
+		pmOrder.BuilderCode = e.builderCode
 	}
 
 	resp, err := e.client.PlaceOrder(ctx, pmOrder)
@@ -170,6 +183,9 @@ func (e *Executor) executeLimitFallback(ctx context.Context, req order.Request) 
 
 	if e.negRisk {
 		pmOrder.NegRisk = true
+	}
+	if e.builderCode != "" {
+		pmOrder.BuilderCode = e.builderCode
 	}
 
 	resp, err := e.client.PlaceOrder(ctx, pmOrder)
