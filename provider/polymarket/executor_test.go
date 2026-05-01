@@ -251,5 +251,99 @@ func TestExecutor_WithNegRisk(t *testing.T) {
 	_ = receivedNegRisk
 }
 
+func TestExecutor_WithBuilderCode_Unsigned(t *testing.T) {
+	var receivedBuilderCode string
+	server, client := mockCLOBServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == "POST" {
+			var body map[string]any
+			_ = json.NewDecoder(r.Body).Decode(&body)
+			if bc, ok := body["builderCode"].(string); ok {
+				receivedBuilderCode = bc
+			}
+		}
+		json.NewEncoder(w).Encode(map[string]any{
+			"orderID": "ord-build",
+			"status":  "MATCHED",
+		})
+	}))
+	defer server.Close()
+
+	code := "0x000000000000000000000000000000000000000000000000000000000000beef"
+	exec := pm.NewExecutor(client, executorLogger(), pm.WithFOK(), pm.WithBuilderCode(code))
+	if _, err := exec.Execute(context.Background(), order.Request{
+		Instrument: "token-abc",
+		Side:       "BUY",
+		Price:      0.55,
+		Size:       100,
+	}); err != nil {
+		t.Fatalf("Execute error: %v", err)
+	}
+
+	if receivedBuilderCode != code {
+		t.Errorf("builderCode wire field = %q, want %q", receivedBuilderCode, code)
+	}
+}
+
+func TestExecutor_SignedV2_PostsSignedPayload(t *testing.T) {
+	var receivedOwner string
+	var hasSignature bool
+	var hasTimestamp bool
+	server, _ := mockCLOBServer(nil)
+	server.Close()
+
+	server = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		var body map[string]any
+		_ = json.NewDecoder(r.Body).Decode(&body)
+		if owner, ok := body["owner"].(string); ok {
+			receivedOwner = owner
+		}
+		if orderMap, ok := body["order"].(map[string]any); ok {
+			if sig, ok := orderMap["signature"].(string); ok && sig != "" {
+				hasSignature = true
+			}
+			if ts, ok := orderMap["timestamp"].(string); ok && ts != "" {
+				hasTimestamp = true
+			}
+		}
+		json.NewEncoder(w).Encode(map[string]any{
+			"orderID": "ord-signed",
+			"status":  "MATCHED",
+		})
+	}))
+	defer server.Close()
+
+	client := pm.NewClient(server.URL, "test-api-key", "secret", "pass", 100, 1, 10*time.Millisecond, executorLogger())
+
+	signer, err := pm.NewPrivateKeySigner("ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80", 137)
+	if err != nil {
+		t.Fatalf("create signer: %v", err)
+	}
+	client.WithSigner(signer, signer.Address(), pm.SignatureEOA)
+
+	tokenID := "55672014635283889802989278540843249274560731895658659537716021118792377922815"
+	exec := pm.NewExecutor(client, executorLogger(), pm.WithFOK())
+	if _, err := exec.Execute(context.Background(), order.Request{
+		Instrument: tokenID,
+		Side:       "BUY",
+		Price:      0.55,
+		Size:       100,
+	}); err != nil {
+		t.Fatalf("Execute error: %v", err)
+	}
+
+	if receivedOwner != "test-api-key" {
+		t.Errorf("owner = %q, want test-api-key", receivedOwner)
+	}
+	if !hasSignature {
+		t.Error("expected non-empty signature on signed wire payload")
+	}
+	if !hasTimestamp {
+		t.Error("expected non-empty timestamp on signed wire payload")
+	}
+
+	// Sanity: the underlying counter setup ensures no atomic-import-only-warning.
+	_ = atomic.AddInt32(new(int32), 0)
+}
+
 // Verify interface compliance
 var _ order.Executor = (*pm.Executor)(nil)
